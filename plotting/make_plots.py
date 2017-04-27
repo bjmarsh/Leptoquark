@@ -1,0 +1,64 @@
+#! /usr/bin/env python
+
+import sys
+sys.path.append("/home/users/bemarsh/analysis/mt2/current/MT2Analysis/scripts/CRplotMaker")
+import ROOT
+ROOT.gROOT.SetBatch(1)
+
+from MT2PlotMaker import *
+import MT2PlotDefs as pd
+
+plotdefs = [
+    ("M1",True,None,None,2),
+    ("M2",True,None,None,2),
+    ("MLL",True,None,None,2),
+    ("DM",True,None,None,2),
+    ("AvgM",True,None,None,2),
+    ("met",True,None,None,2),
+]
+
+input_dir = "../looper/output/test"
+output_dir = "plots/test"
+
+pd.lumi = 36.8
+pd.lumiUnit = "fb"
+
+exts = ["pdf","png"]
+
+signals = ["T2tt_RPV_700","T2tt_RPV_900","T2tt_RPV_1100"]
+
+MT2PlotMaker(input_dir, ["top","dyjetsll","wjets","ww_2l2nu"], None, "mumu_baseline", plotdefs, output_dir, exts, signals=signals, opts="noSubtitles")
+MT2PlotMaker(input_dir, ["top","dyjetsll","wjets","ww_2l2nu"], None, "emu_baseline", plotdefs, output_dir, exts, opts="noSubtitles")
+MT2PlotMaker(input_dir, ["top","dyjetsll","wjets","ww_2l2nu"], None, "mumu_zmass", plotdefs, output_dir, exts, signals=signals, opts="noSubtitles")
+MT2PlotMaker(input_dir, ["top","dyjetsll","wjets","ww_2l2nu"], None, "emu_zmass", plotdefs, output_dir, exts, opts="noSubtitles")
+MT2PlotMaker(input_dir, ["top","dyjetsll","wjets","ww_2l2nu"], None, "mumu_sr", plotdefs, output_dir, exts, signals=signals, opts="noSubtitles")
+MT2PlotMaker(input_dir, ["top","dyjetsll","wjets","ww_2l2nu"], None, "mumu_crdm", plotdefs, output_dir, exts, signals=signals, opts="noSubtitles")
+
+
+fin = ROOT.TFile(os.path.join(input_dir,"all.root"))
+
+for dir in ["mumu_baseline","emu_baseline", "mumu_zmass", "emu_zmass"]:
+# for dir in ["mumu_baseline","mumu_zmass"]:
+
+    c1 = ROOT.TCanvas()
+    c1.SetCanvasSize(700,504)
+    c1.SetLogz(True)
+    ROOT.gStyle.SetNumberContours(255)
+
+    h_M1M2 = fin.Get("{0}/h_M1M2".format(dir))
+    h_M1M2.Draw("COLZ")
+
+    c1.SaveAs(os.path.join(output_dir, dir, "{0}_M1M2.pdf".format(dir)))
+    c1.SaveAs(os.path.join(output_dir, dir, "{0}_M1M2.png".format(dir)))
+
+    c1.Clear()
+    
+    h_DMAvgM = fin.Get("{0}/h_DMAvgM".format(dir))
+    h_DMAvgM.Draw("COLZ")
+    
+    c1.SaveAs(os.path.join(output_dir, dir, "{0}_DMAvgM.pdf".format(dir)))
+    c1.SaveAs(os.path.join(output_dir, dir, "{0}_DMAvgM.png".format(dir)))
+    
+fin.Close()
+
+
