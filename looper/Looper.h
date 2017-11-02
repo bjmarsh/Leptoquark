@@ -16,8 +16,8 @@
 #include "Math/LorentzVector.h"
 
 //MT2
-#include "/home/users/bemarsh/analysis/mt2/current/MT2Analysis/MT2CORE/mt2tree.h"
-#include "/home/users/bemarsh/analysis/mt2/current/MT2Analysis/MT2CORE/SR.h"
+#include "../MT2Analysis/MT2CORE/mt2tree.h"
+#include "../MT2Analysis/MT2CORE/SR.h"
 
 typedef ROOT::Math::LorentzVector<ROOT::Math::PxPyPzE4D<float> > LorentzVector;
 
@@ -38,9 +38,11 @@ class Looper {
     mt2tree t;
     float evtweight_;
     std::vector<SR> SRVec;
-      
-    float M1,M2,M1p,M2p,DM,DMp,AvgM,AvgMp;
-    float mLL, Mbb, deltaPhiLL, deltaPhibb, deltaPhiMETJet;
+    std::map<std::string, TH1*> h_1d_global;
+
+    int bidx1, bidx2;
+    float M1,M2,M1p,M2p,DM,DMp,AvgM,AvgMp,ST;
+    float mLL, mbb, deltaPhiLL, deltaPhibb, deltaPhiMETJet;
     bool isMuMu, isEMu;
 };
 

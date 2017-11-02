@@ -20,8 +20,9 @@
 #include "Looper.h"
 
 //MT2
-#include "/home/users/bemarsh/analysis/mt2/current/MT2Analysis/MT2CORE/Plotting/PlotUtilities.h"
+#include "../MT2Analysis/MT2CORE/Plotting/PlotUtilities.h"
 
+#define PI 3.14159265359
 
 using namespace std;
 using namespace duplicate_removal;
@@ -47,6 +48,7 @@ Looper::~Looper(){
 
 };
 
+// samples all have their xsec set to 1.0 pb. Fix here
 float SignalXsecCorrection(const string &name){
 
     if(name.find("T2tt_RPV_700") != string::npos)
@@ -70,6 +72,7 @@ void Looper::SetSignalRegions(){
     sr.SetVar("isEMu", 0, 1);
     sr.SetVar("DM",0,-1);
     sr.SetVar("AvgM",0,-1);
+    sr.SetVar("bidx2",0,-1);
     SRVec.push_back(sr);
     outfile_->mkdir(sr.GetName().c_str());
 
@@ -79,6 +82,7 @@ void Looper::SetSignalRegions(){
     sr.SetVar("isEMu", 1, 2);
     sr.SetVar("DM",0,-1);
     sr.SetVar("AvgM",0,-1);
+    sr.SetVar("bidx2",0,-1);
     SRVec.push_back(sr);
     outfile_->mkdir(sr.GetName().c_str());
 
@@ -88,6 +92,7 @@ void Looper::SetSignalRegions(){
     sr.SetVar("isEMu", 0, 1);
     sr.SetVar("DM",0,-1);
     sr.SetVar("AvgM",0,-1);
+    sr.SetVar("bidx2",0,-1);
     SRVec.push_back(sr);
     outfile_->mkdir(sr.GetName().c_str());
 
@@ -97,6 +102,7 @@ void Looper::SetSignalRegions(){
     sr.SetVar("isEMu", 1, 2);
     sr.SetVar("DM",0,-1);
     sr.SetVar("AvgM",0,-1);
+    sr.SetVar("bidx2",0,-1);
     SRVec.push_back(sr);
     outfile_->mkdir(sr.GetName().c_str());
 
@@ -106,6 +112,7 @@ void Looper::SetSignalRegions(){
     sr.SetVar("isEMu", 0, 1);
     sr.SetVar("DM",0,100);
     sr.SetVar("AvgM",0,-1);
+    sr.SetVar("bidx2",0,-1);
     SRVec.push_back(sr);
     outfile_->mkdir(sr.GetName().c_str());
 
@@ -115,6 +122,7 @@ void Looper::SetSignalRegions(){
     sr.SetVar("isEMu", 0, 1);
     sr.SetVar("DM",100,-1);
     sr.SetVar("AvgM",0,-1);
+    sr.SetVar("bidx2",0,-1);
     SRVec.push_back(sr);
     outfile_->mkdir(sr.GetName().c_str());
 
@@ -124,6 +132,7 @@ void Looper::SetSignalRegions(){
     sr.SetVar("isEMu", 1, 2);
     sr.SetVar("DM",0,100);
     sr.SetVar("AvgM",0,-1);
+    sr.SetVar("bidx2",0,-1);
     SRVec.push_back(sr);
     outfile_->mkdir(sr.GetName().c_str());
 
@@ -133,6 +142,7 @@ void Looper::SetSignalRegions(){
     sr.SetVar("isEMu", 1, 2);
     sr.SetVar("DM",100,-1);
     sr.SetVar("AvgM",0,-1);
+    sr.SetVar("bidx2",0,-1);
     SRVec.push_back(sr);
     outfile_->mkdir(sr.GetName().c_str());
 
@@ -142,8 +152,40 @@ void Looper::SetSignalRegions(){
     sr.SetVar("isEMu", 0, 1);
     sr.SetVar("DM",0,100);
     sr.SetVar("AvgM",500,-1);
+    sr.SetVar("bidx2",0,-1);
     SRVec.push_back(sr);
     outfile_->mkdir(sr.GetName().c_str());
+
+    sr.SetName("mumu_sr_AvgM500_Btop2");
+    sr.SetVar("passZmass", 1, 2);
+    sr.SetVar("isMuMu", 1, 2);
+    sr.SetVar("isEMu", 0, 1);
+    sr.SetVar("DM",0,100);
+    sr.SetVar("AvgM",500,-1);
+    sr.SetVar("bidx2",1, 2);
+    SRVec.push_back(sr);
+    outfile_->mkdir(sr.GetName().c_str());
+
+    sr.SetName("emu_sr_AvgM500");
+    sr.SetVar("passZmass", 1, 2);
+    sr.SetVar("isMuMu", 0, 1);
+    sr.SetVar("isEMu", 1, 2);
+    sr.SetVar("DM",0,100);
+    sr.SetVar("AvgM",500,-1);
+    sr.SetVar("bidx2",0,-1);
+    SRVec.push_back(sr);
+    outfile_->mkdir(sr.GetName().c_str());
+
+    sr.SetName("emu_sr_AvgM500_Btop2");
+    sr.SetVar("passZmass", 1, 2);
+    sr.SetVar("isMuMu", 0, 1);
+    sr.SetVar("isEMu", 1, 2);
+    sr.SetVar("DM",0,100);
+    sr.SetVar("AvgM",500,-1);
+    sr.SetVar("bidx2",1, 2);
+    SRVec.push_back(sr);
+    outfile_->mkdir(sr.GetName().c_str());
+
 }
 
 
@@ -230,6 +272,8 @@ void Looper::loop(TChain* chain, std::string output_name){
             // it is set to 1 pb in the ntuples
             evtweight_ *= SignalXsecCorrection(currentFile->GetTitle());
 
+            plot1D("h_weight",  evtweight_, 1, h_1d_global, ";evtweight", 100, 0, 1);
+
             //---------------------
             // basic event selection and cleaning
             //---------------------
@@ -258,8 +302,8 @@ void Looper::loop(TChain* chain, std::string output_name){
 
             //count the number of loose bjets with pt>40
             int nBJet40 = 0;
-            int bidx1 = -1;
-            int bidx2 = -1;
+            bidx1 = -1;
+            bidx2 = -1;
             for(int i=0; i<t.nJet30; i++){
                 if(t.jet_pt[i] < 40)
                     break;
@@ -291,8 +335,8 @@ void Looper::loop(TChain* chain, std::string output_name){
                 continue;
 
             //require electrons to be loose (already applied at baby-level for mus)
-            if(abs(t.lep_pdgId[0])==11 && t.lep_tightId[0]<1) continue;
-            if(abs(t.lep_pdgId[1])==11 && t.lep_tightId[0]<1) continue;
+            if(abs(t.lep_pdgId[0])==11 && t.lep_tightId[0]>=1) continue;
+            if(abs(t.lep_pdgId[1])==11 && t.lep_tightId[0]>=1) continue;
 
             isMuMu = false;
             isEMu = false;
@@ -309,10 +353,13 @@ void Looper::loop(TChain* chain, std::string output_name){
             LorentzVector l2_p4 = GetLorentzVector(t.lep_pt[1], t.lep_eta[1], t.lep_phi[1]);
 
             mLL = (l1_p4+l2_p4).M();
+            mbb = (b1_p4+b2_p4).M();
 
             M1 = (b1_p4+l1_p4).M();
             M2 = (b2_p4+l2_p4).M();
-
+            
+            // the "primed" variables (trailing p) are the second possible lep-b pairing.
+            // check below which one yields a lower DM, and use those
             M1p = (b2_p4+l1_p4).M();
             M2p = (b1_p4+l2_p4).M();
 
@@ -321,7 +368,25 @@ void Looper::loop(TChain* chain, std::string output_name){
 
             AvgM = (M1+M2)/2;
             AvgMp = (M1p+M2p)/2;            
-           
+
+            ST = b1_p4.pt() + b2_p4.pt() + l1_p4.pt() + l2_p4.pt();
+            
+            deltaPhiLL = fabs(t.lep_phi[0] - t.lep_phi[1]);
+            if(deltaPhiLL > PI)
+                deltaPhiLL = 2*PI - deltaPhiLL;
+
+            deltaPhibb = fabs(t.jet_phi[bidx1] - t.jet_phi[bidx2]);
+            if(deltaPhibb > PI)
+                deltaPhibb = 2*PI - deltaPhibb;
+
+            float deltaPhiMETJet1 = fabs(t.met_phi - t.jet_phi[bidx1]);
+            if(deltaPhiMETJet1 > PI)
+                deltaPhiMETJet1 = 2*PI - deltaPhiMETJet1;
+            float deltaPhiMETJet2 = fabs(t.met_phi - t.jet_phi[bidx2]);
+            if(deltaPhiMETJet2 > PI)
+                deltaPhiMETJet2 = 2*PI - deltaPhiMETJet2;
+            deltaPhiMETJet = min(deltaPhiMETJet1, deltaPhiMETJet2);
+            
             std::map<std::string, float> values;
             values["passZmass"] = (mLL<91.19-15 || mLL>91.19+15);
             values["isMuMu"] = isMuMu;
@@ -333,6 +398,7 @@ void Looper::loop(TChain* chain, std::string output_name){
                 values["DM"] = DMp;
                 values["AvgM"] = AvgMp;
             }
+            values["bidx2"] = bidx2;
             for(unsigned int i=0; i<SRVec.size(); i++){
                 if(SRVec.at(i).PassesSelection(values))
                     fillHistos(SRVec.at(i).srHistMap, SRVec.at(i).GetName().c_str());
@@ -374,9 +440,11 @@ void Looper::fillHistos(std::map<std::string, TH1*>& h_1d, const std::string& di
     TDirectory * dir = (TDirectory*)outfile_->Get(dirname.c_str());
     if (dir == 0) {
         dir = outfile_->mkdir(dirname.c_str());
+           
     } 
     dir->cd();
 
+    // use primed variables if second lep-b pairing is better
     if(DMp<DM){
         M1 = M1p;
         M2 = M2p;
@@ -384,14 +452,21 @@ void Looper::fillHistos(std::map<std::string, TH1*>& h_1d, const std::string& di
         AvgM = AvgMp;
     }
 
-    if(AvgM>1000 && evtweight_>1.0)
-        cout << t.evt << " " << AvgM << " " << evtweight_ << endl;
+    // if(AvgM>1000 && evtweight_>1.0)
+    //     cout << t.evt << " " << AvgM << " " << evtweight_ << endl;
     
     plot1D("h_Events"+s,  1, 1, h_1d, ";Events, Unweighted", 1, 0, 2);
     plot1D("h_Events_w"+s,  1,   evtweight_, h_1d, ";Events, Weighted", 1, 0, 2);
     plot1D("h_M1"+s,        M1,   evtweight_, h_1d, "b/mu Inv Mass",100,0,2000);
     plot1D("h_M2"+s,        M2,   evtweight_, h_1d, "b/mu Inv Mass",100,0,2000);
     plot1D("h_MLL"+s,      mLL,   evtweight_, h_1d, ";m_{LL}",100,0,1000);
+    plot1D("h_Mbb"+s,      mbb,   evtweight_, h_1d, ";m_{bb}",100,0,1000);
+    plot1D("h_ST"+s,      ST,   evtweight_, h_1d, ";S_{T}",100,0,3000);
+    plot1D("h_deltaPhiLL"+s,      deltaPhiLL,   evtweight_, h_1d, ";#Delta#phi_{LL}",100,0,PI);
+    plot1D("h_deltaPhibb"+s,      deltaPhibb,   evtweight_, h_1d, ";#Delta#phi_{bb}",100,0,PI);
+    plot1D("h_deltaPhiMETJet"+s,      deltaPhiMETJet,   evtweight_, h_1d, ";#Delta#phi_{MET-Jet}",100,0,PI);
+    plot1D("h_bidx1"+s,         bidx1,     evtweight_, h_1d, ";bidx1",5,0,5);
+    plot1D("h_bidx2"+s,         bidx2,     evtweight_, h_1d, ";bidx2",5,0,5);
     plot2D("h_M1M2"+s, M1, M2, evtweight_, h_1d, "b/mu Inv Masses;M1;M2",100,0,2000,100,0,2000);
 
     plot1D("h_DM"+s,        DM,   evtweight_, h_1d, "min(#Delta M)",100,0,1000);

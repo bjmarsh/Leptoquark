@@ -38,7 +38,7 @@ SOURCES = $(wildcard *.cc)
 OBJECTS = $(SOURCES:.cc=.o)
 LIB = libLooper.so
 
-CORESOURCES = $(wildcard /home/users/bemarsh/analysis/mt2/current/MT2Analysis/MT2CORE/*.cc) $(wildcard /home/users/bemarsh/analysis/mt2/current/MT2Analysis/MT2CORE/MT2/*.cc) $(wildcard /home/users/bemarsh/analysis/mt2/current/MT2Analysis/MT2CORE/Plotting/*.cc)
+CORESOURCES = $(wildcard ../MT2Analysis/MT2CORE/*.cc) $(wildcard ../MT2Analysis/MT2CORE/MT2/*.cc) $(wildcard ../MT2Analysis/MT2CORE/Plotting/*.cc)
 COREOBJECTS = $(CORESOURCES:.cc=.o) 
 CORELIB = libLooperCORE.so
 
@@ -107,12 +107,12 @@ clean:
 	*.o \
 	$(LIBS) \
 	$(EXE) \
-        /home/users/bemarsh/analysis/mt2/current/MT2Analysis/MT2CORE/*.o \
-        /home/users/bemarsh/analysis/mt2/current/MT2Analysis/MT2CORE/*.d \
-        /home/users/bemarsh/analysis/mt2/current/MT2Analysis/MT2CORE/*.so \
-        /home/users/bemarsh/analysis/mt2/current/MT2Analysis/MT2CORE/Plotting/*.o \
-        /home/users/bemarsh/analysis/mt2/current/MT2Analysis/MT2CORE/Plotting/*.d \
-        /home/users/bemarsh/analysis/mt2/current/MT2Analysis/MT2CORE/Plotting/*.so \
+        ../MT2Analysis/MT2CORE/*.o \
+        ../MT2Analysis/MT2CORE/*.d \
+        ../MT2Analysis/MT2CORE/*.so \
+        ../MT2Analysis/MT2CORE/Plotting/*.o \
+        ../MT2Analysis/MT2CORE/Plotting/*.d \
+        ../MT2Analysis/MT2CORE/Plotting/*.so \
         ../CORE/Tools/*.o \
 	../CORE/Tools/*.d \
         ../CORE/Tools/*.so \
